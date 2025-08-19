@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panel Admin - Live Chat</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0d0d0d;
+      color: #fff;
+      display: flex;
+      height: 100vh;
+      gap: 20px;
+      padding: 20px;
+    }
+    #user-list {
+      width: 220px;
+      background: #1a1a1a;
+      border-radius: 10px;
+      padding: 10px;
+      overflow-y: auto;
+    }
+    #user-list div {
+      background: #2a2a2a;
+      margin-bottom: 8px;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #user-list .active {
+      background: #00cc66;
+      color: black;
+    }
+    #chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    #chat-box {
+      flex: 1;
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .message {
+      padding: 10px 14px;
+      border-radius: 10px;
+      max-width: 75%;
+    }
+    .Pengguna {
+      background: #444;
+      align-self: flex-start;
+    }
+    .Admin {
+      background: #007bff;
+      align-self: flex-end;
+      color: white;
+    }
+    input, button {
+      padding: 12px;
+      font-size: 16px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+    }
+    button {
+      background: #00cc66;
+      color: black;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="user-list">
+  <strong>Pengguna:</strong>
+  <div id="users"></div>
+</div>
+
+<div id="chat-area">
+  <h2 id="chat-title">Live Chat</h2>
+  <div id="chat-box"></div>
+  <input type="text" id="admin-msg" placeholder="Balas pesan..." />
+  <button id="balas-btn">Kirim</button>
+</div>
+
+<script>
+  const usersDiv = document.getElementById("users");
+  const chatBox = document.getElementById("chat-box");
+  const chatTitle = document.getElementById("chat-title");
+  const input = document.getElementById("admin-msg");
+  const btn = document.getElementById("balas-btn");
+
+  let activeUser = null;
+  let messages = {};
+
+  function appendMessage(who, msg) {
+    const el = document.createElement("div");
+    el.className = `message ${who}`;
+    el.textContent = msg;
+    chatBox.appendChild(el);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function setActiveUser(username) {
+    activeUser = username;
+    chatTitle.textContent = `Chat dengan: ${username}`;
+    renderChat(username);
+    document.querySelectorAll("#users div").forEach(div => {
+      div.classList.toggle("active", div.textContent === username);
+    });
+  }
+
+  function renderChat(username) {
+    chatBox.innerHTML = "";
+    if (messages[username]) {
+      messages[username].forEach(({ who, msg }) => {
+        appendMessage(who, msg);
+      });
+    }
+  }
+
+  btn.addEventListener("click", () => {
+    const msg = input.value.trim();
+    if (msg && activeUser) {
+      appendMessage("Admin", msg);
+      messages[activeUser].push({ who: "Admin", msg });
+      localStorage.setItem(`chat-from-admin-${activeUser}`, msg);
+      input.value = "";
+    }
+  });
+
+  window.addEventListener("storage", (e) => {
+    if (e.key === "new-message") {
+      const data = JSON.parse(e.newValue);
+      const { username, message } = data;
+
+      if (!messages[username]) {
+        messages[username] = [];
+        const userDiv = document.createElement("div");
+        userDiv.textContent = username;
+        userDiv.onclick = () => setActiveUser(username);
+        usersDiv.appendChild(userDiv);
+      }
+
+      messages[username].push({ who: "Pengguna", msg: message });
+      if (username === activeUser) {
+        appendMessage("Pengguna", message);
+      }
+    }
+  });
+</script>
+</body>
+</html>

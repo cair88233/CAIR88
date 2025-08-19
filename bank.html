@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UI Minimal + Notifikasi + Pesan Transaksi</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { 
+  background:white; 
+  color:#fff; 
+  font-family:sans-serif; 
+  min-height:100vh; 
+  overflow: hidden; /* Tambahkan ini */
+}
+
+/* Topbar */
+.topbar {
+  display:flex; justify-content:space-between; align-items:center;
+  background:#222; padding:10px 20px; position:fixed; top:0; width:100%; z-index:999;
+}
+.topbar .logo { height:50px; }
+
+/* Hamburger */
+.menu-icon {
+  width:35px; height:28px; display:flex; flex-direction:column;
+  justify-content:space-between; cursor:pointer;
+}
+.menu-icon div {
+  height:5px; background:#fff; border-radius:3px; width:100%;
+}
+
+/* Sidebar */
+.sidebar {
+  position:fixed; top:0; right:-300px; width:300px; height:100%;
+  background:#333; transition:right 0.3s ease; padding:20px; box-sizing:border-box; z-index:1000;
+}
+.sidebar.open { right:0; }
+.sidebar .close-btn {
+  font-size:28px; color:#fff; cursor:pointer; text-align:right; margin-bottom:15px;
+}
+.sidebar-user-info {
+  background:#222; padding:10px 15px; border-radius:8px; margin-bottom:15px;
+  font-size:14px; color:#fff; text-align:center;
+}
+.sidebar .grid {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:15px;
+}
+.sidebar .grid div {
+  background:#444; height:80px; border-radius:10px;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  cursor:pointer; font-size:14px; transition:background 0.3s; color:#fff;
+}
+.sidebar .grid div i { font-size:28px; margin-bottom:5px; }
+.sidebar .grid div:hover { background:#555; }
+
+/* Bottom nav */
+.bottom-nav {
+  position:fixed; bottom:0; width:100%; height:70px; background-color:#6a1b9a;
+  display:flex; justify-content:space-around; align-items:center; z-index:999;
+}
+.bottom-nav a {
+  text-align:center; color:white; text-decoration:none; font-size:12px; flex-grow:1;
+  display:flex; flex-direction:column; align-items:center; padding:8px 0;
+}
+.bottom-nav a:hover { background-color:#7e3ab9; }
+.bottom-nav img { width:24px; height:24px; margin-bottom:4px; }
+
+/* Notifikasi */
+.notification-container {
+  position:fixed; top:20px; right:20px; z-index:2000;
+}
+.notification {
+  padding:12px 20px; margin-bottom:10px; border-radius:8px;
+  color:#fff; font-weight:bold; box-shadow:0 4px 8px rgba(0,0,0,0.3);
+  opacity:0; transform:translateX(100%);
+  transition:all 0.4s ease;
+}
+.notification.show { opacity:1; transform:translateX(0); }
+.success { background:#28a745; }
+.error { background:#dc3545; }
+
+/* Pesan Transaksi */
+.transaction-message {
+  margin-top:100px; /* jarak dari topbar */
+  text-align:center;
+  font-size: 24px;
+  font-weight:bold;
+  padding:12px 20px;
+  border: 2px solid;
+  border-image: linear-gradient(to right, yellow, orange) 1;
+  border-radius:8px;
+  width:80%;
+  max-width:500px;
+  margin-left:auto;
+  margin-right:auto;
+  background:#fff8e1;
+  color:#333;
+  box-shadow:0 4px 8px rgba(0,0,0,0.1);
+
+  /* Animasi awal */
+  opacity:0;
+  transform:translateY(-20px);
+  transition: all 0.6s ease;
+}
+.transaction-message.show {
+  opacity:1;
+  transform:translateY(0);
+}
+
+
+  /* Loading Overlay */
+#loadingOverlay {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+/* Spinner */
+.spinner {
+  border: 8px solid #f3f3f3; /* warna background */
+  border-top: 8px solid #6a1b9a; /* warna animasi */
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  animation: spin 1s linear infinite;
+}
+
+/* Animasi putar */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="menu-icon" onclick="toggleSidebar()">
+    <div></div><div></div><div></div>
+  </div>
+  <img src="logo.png" alt="Logo" class="logo">
+  <div style="width:30px;"></div>
+</div>
+
+<!-- Pesan Selesaikan Transaksi -->
+<div class="transaction-message" id="transactionMessage">
+  Selesaikan Transaksi Anda untuk melanjutkan.
+</div>
+
+
+
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="close-btn" onclick="toggleSidebar()">×</div>
+  <div class="sidebar-user-info">
+    <p><strong>Username: <span id="sidebar-username">...</span></strong></p>
+    <p>Balance: Rp <span id="sidebar-saldo">0</span></p>
+  </div>
+  <div class="grid">
+    <div onclick="goToPage('RTP.html')"><i class="fas fa-chart-line"></i>RTP</div>
+    <div onclick="showNotification('Deposit 20.000 pertama bisa di akses!', 'error')"><i class="fas fa-gift"></i>FREE SPINS</div>
+    <div onclick="showNotification('Deposit minimal 50.000 agar bisa di akses!', 'error')"><i class="fas fa-percent"></i>PROMO</div>
+    <div onclick="goToPage('Akun.html')"><i class="fas fa-wallet"></i>DOMPET</div>
+    <div onclick="goToPage('Akun.html')"><i class="fas fa-cog"></i>PENGATURAN</div>
+    <div onclick="goToPage('Live Chat.html')"><i class="fas fa-comments"></i>BANTUAN</div>
+  </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+</div>
+
+
+<!-- Notifikasi Container -->
+<div class="notification-container" id="notifContainer"></div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <a href="ui.html"><img src="https://img.icons8.com/ios-filled/50/ffffff/home.png">Home</a>
+  <a href="Deposit.html"><img src="https://img.icons8.com/ios-filled/50/ffffff/money.png">Deposit</a>
+  <a href="Live Chat.html"><img src="https://img.icons8.com/ios-filled/50/ffffff/chat.png">Live Chat</a>
+  <a href="Akun.html"><img src="https://img.icons8.com/ios-filled/50/ffffff/user.png">Akun</a>
+</div>
+
+
+
+<script>
+  // Hilangkan loading setelah halaman selesai load
+window.addEventListener('load', () => {
+  const overlay = document.getElementById('loadingOverlay');
+  overlay.style.display = 'none';
+});
+  
+const user = localStorage.getItem("loginSekarang") || "Guest";
+document.getElementById("sidebar-username").innerText = user;
+document.getElementById("sidebar-saldo").innerText =
+  (parseInt(localStorage.getItem("saldo_" + user)) || 0).toLocaleString("id-ID");
+
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("open");
+}
+function goToPage(file) {
+  window.location.href = file;
+}
+
+/* Notifikasi */
+function showNotification(message, type="success") {
+  const container = document.getElementById("notifContainer");
+  const notif = document.createElement("div");
+  notif.classList.add("notification", type);
+  notif.innerText = message;
+  container.appendChild(notif);
+
+  setTimeout(() => notif.classList.add("show"), 10);
+
+  setTimeout(() => {
+    notif.classList.remove("show");
+    setTimeout(() => notif.remove(), 400);
+  }, 3000);
+}
+
+/* Animasi muncul pesan transaksi */
+window.addEventListener('load', () => {
+  const msg = document.getElementById('transactionMessage');
+  setTimeout(() => {
+    msg.classList.add('show');
+  }, 200);
+});
+</script>
+
+</body>
+</html>

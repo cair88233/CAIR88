@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transaksi</title>
+<style>
+  body {
+    background: #222;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+
+  .btn {
+    display: inline-block;
+    background: linear-gradient(90deg, #a020f0, #7a00cc);
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    margin-bottom: 20px;
+    font-size: 16px;
+  }
+
+  .table-container {
+    background: #111;
+    border: 2px solid #0ff;
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead {
+    background: #000;
+  }
+
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+    font-size: 14px;
+  }
+
+  th {
+    font-weight: bold;
+  }
+
+  tbody tr:hover {
+    background: #333;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Transaksi Baru</h1>
+    <button class="btn">Lihat Transaksi Lama</button>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>Periode</th>
+            <th>Keterangan</th>
+            <th>Status</th>
+            <th>Saldo</th>
+          </tr>
+        </thead>
+        <tbody id="transaction-body">
+          <!-- Data transaksi akan muncul di sini -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+<script>
+  // Data contoh transaksi
+  
+
+  function renderTransactions() {
+    const tbody = document.getElementById('transaction-body');
+    tbody.innerHTML = '';
+    transactions.forEach(trx => {
+      const row = `<tr>
+        <td>${trx.tanggal}</td>
+        <td>${trx.periode}</td>
+        <td>${trx.keterangan}</td>
+        <td>${trx.status}</td>
+        <td>${trx.saldo}</td>
+      </tr>`;
+      tbody.innerHTML += row;
+    });
+  }
+
+  renderTransactions();
+</script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UI Pengguna - Slot</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; color:#fff; font-family:sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+
+/* Topbar */
+.topbar {
+  display:flex; justify-content:space-between; align-items:center;
+  background:#222; padding:10px 20px; position:fixed; top:0; width:100%; z-index:999;
+}
+.topbar .logo { height:50px; }
+
+/* Hamburger custom 3 garis */
+.menu-icon {
+  width:35px;
+  height:28px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  cursor:pointer;
+}
+.menu-icon div {
+  height:5px;        /* ketebalan garis */
+  background:#fff;
+  border-radius:3px;
+  width:100%;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  padding-top: 90px; /* tambahkan jarak supaya tidak tertutup topbar */
+}
+
+
+/* Horizontal menu */
+.horizontal-menu { display:flex; overflow-x:auto; gap:10px; margin-top:70px; padding:10px 0; }
+.horizontal-menu button {
+  white-space:nowrap; background:#333; border:none; color:#fff;
+  padding:10px 16px; border-radius:20px; font-size:14px; cursor:pointer; flex-shrink:0; transition:background 0.3s;
+}
+.horizontal-menu button:hover { background:#6a1b9a; }
+
+/* Info Box */
+.info-box { width:100%; max-width:500px; margin:20px auto; }
+.btn-group { display:flex; gap:10px; margin-bottom:10px; }
+.btn-group button { flex:1; background:#a846ff; padding:10px; border:none; border-radius:8px; font-size:14px; color:#fff; font-weight:bold; cursor:pointer; }
+.info-card { background:#111; padding:12px 15px; border-radius:10px; }
+.username { font-size:12px; font-weight:500; text-align:center; margin-bottom:5px; }
+.saldo-row { display:flex; justify-content:center; align-items:center; gap:10px; }
+.saldo { font-size:14px; font-weight:bold; color:#4caf50; }
+.refresh-btn { background:none; border:none; cursor:pointer; padding:0; }
+.refresh-btn i { color:white; transition:transform 0.3s ease; }
+.refresh-btn:hover i { transform:rotate(90deg); }
+
+/* Marquee */
+.marquee-wrap { width:100%; overflow:hidden; background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); border-radius:8px; padding:8px 0; border:1px solid rgba(255,255,255,0.04); margin:10px 0; }
+.marquee { display:inline-block; white-space:nowrap; font-weight:700; font-size:18px; padding-left:100%; animation:move 18s linear infinite; background:linear-gradient(90deg,#ff0057,#00e5ff,#7cff00); -webkit-background-clip:text; background-clip:text; color:transparent; filter: drop-shadow(0 0 10px rgba(255,0,85,0.18)) drop-shadow(0 0 6px rgba(0,229,255,0.12)); }
+@keyframes move { 0%{transform:translateX(0%);} 100%{transform:translateX(-100%);} }
+@media(max-width:600px){.marquee{font-size:14px;}}
+
+/* Game grid */
+.game-grid { width:100%; max-width:600px; display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:15px; margin:20px auto; }
+.game-card { background:#1c1c1c; border-radius:10px; position:relative; overflow:hidden; text-align:center; height:190px; cursor:pointer; border:1px solid #333; }
+.game-card img { width:100%; height:130px; object-fit:cover; }
+.game-card p { margin:5px 0; font-size:14px; }
+.play-button { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:#4caf50; border:none; padding:8px 12px; color:#fff; border-radius:5px; cursor:pointer; display:none; z-index:2; }
+.game-card:hover .play-button { display:block; }
+
+/* Sidebar */
+.sidebar { position:fixed; top:0; right:-300px; width:300px; height:100%; background:#333; transition:right 0.3s ease; padding:20px; box-sizing:border-box; z-index:999; }
+.sidebar.open { right:0; }
+.sidebar .close-btn { font-size:28px; color:#fff; cursor:pointer; text-align:right; margin-bottom:15px; }
+
+/* Sidebar user info */
+.sidebar-user-info { background:#222; padding:10px 15px; border-radius:8px; margin-bottom:15px; font-size:14px; color:#fff; text-align:center; }
+
+/* Sidebar grid icons 2x2 */
+.sidebar .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:15px; }
+.sidebar .grid div { background:#444; height:80px; border-radius:10px; display:flex; flex-direction:column; justify-content:center; align-items:center; cursor:pointer; font-size:14px; transition:background 0.3s; color:#fff; }
+.sidebar .grid div i { font-size:28px; margin-bottom:5px; }
+.sidebar .grid div:hover { background:#555; }
+
+/* Notification */
+.notification-container { position:fixed; top:20px; right:20px; width:250px; z-index:9999; }
+.notification { background:red; color:white; padding:10px; margin-bottom:10px; border-radius:5px; box-shadow:0 4px 8px rgba(0,0,0,0.3); animation:fadeIn 0.3s ease; }
+@keyframes fadeIn { from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
+
+/* Bottom nav */
+.bottom-nav { position:fixed; bottom:0; width:100%; height:70px; background-color:#6a1b9a; display:flex; justify-content:space-around; align-items:center; z-index:999; }
+.bottom-nav a { text-align:center; color:white; text-decoration:none; font-size:12px; flex-grow:1; display:flex; flex-direction:column; align-items:center; padding:8px 0; }
+.bottom-nav a:hover { background-color:#7e3ab9; }
+.bottom-nav img { width:24px; height:24px; margin-bottom:4px; }
+
+/* Footer */
+.credit-rgb { width:100%; text-align:center; padding:10px 12px; font-weight:700; font-size:14px; letter-spacing:0.4px; background:transparent; -webkit-background-clip:text; background-clip:text; color:transparent; background-image:linear-gradient(90deg,#ff0044,#ffdd00,#00ff99,#00aaff,#ff0044); filter:drop-shadow(0 4px 14px rgba(0,170,255,0.08)) drop-shadow(0 2px 6px rgba(255,0,68,0.06)); position:relative; background-size:300% 100%; animation:rgb-shift 6s linear infinite; margin-bottom:80px; }
+@keyframes rgb-shift { 0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;} }
+@media(max-width:600px){.credit-rgb{font-size:12px;padding:8px 10px;}}
+
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="menu-icon" onclick="toggleSidebar()">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+  <img src="logo.png" alt="Logo" class="logo">
+  <div style="width:30px;"></div>
+</div>
+
+<!-- Horizontal Menu -->
+<div class="horizontal-menu">
+  <button onclick="goToPage('MT.html')">News</button>
+  <button onclick="goToPage('Slot.html')">Slots</button>
+  <button onclick="goToPage('MT.html')">Fishing</button>
+  <button onclick="goToPage('MT.html')">Arche</button>
+  <button onclick="goToPage('MT.html')">Olahraga</button>
+  <button onclick="goToPage('MT.html')">Togel</button>
+  <button onclick="goToPage('Syarat.html')">S&K</button>
+</div>
+
+<!-- Main Content -->
+<main>
+  <div class="info-box">
+    <div class="btn-group">
+      <button onclick="topUp()">Deposit</button>
+      <button onclick="goToPage('transaksi.html')">Transaksi</button>
+    </div>
+    <div class="info-card">
+      <div class="username">Username: <span id="username">...</span></div>
+      <div class="saldo-row">
+        <div class="saldo">Balance: Rp <span id="saldo">0</span></div>
+        <button class="refresh-btn" onclick="refreshSaldo()"><i class="fas fa-sync-alt"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Marquee -->
+  <div class="marquee-wrap">
+    <div class="marquee">🎉 SELAMAT DATANG — PROMO HARI INI! — CLAIM BONUS SEKARANG — 🎉</div>
+  </div>
+
+  <!-- Game Grid -->
+  <div class="game-grid" id="gameGrid"></div>
+</main>
+
+<!-- Notifications -->
+<div class="notification-container" id="notificationContainer"></div>
+
+<!-- Sidebar -->
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="close-btn" onclick="toggleSidebar()">×</div>
+  <div class="sidebar-user-info">
+    <p><strong>Username: <span id="sidebar-username">...</span></strong></p>
+    <p>Balance: Rp <span id="sidebar-saldo">0</span></p>
+  </div>
+ <div class="grid">
+  <div onclick="goToPage('RTP.html')"><i class="fas fa-chart-line"></i>RTP</div>
+  <div onclick="showNotification('Deposit 20.000 pertama bisa di akses!')"><i class="fas fa-gift"></i>FREE SPINS</div>
+  <div onclick="showNotification('Deposit minimal 50.000 agar bisa di akses!')"><i class="fas fa-percent"></i>PROMO</div>
+  <div onclick="goToPage('Akun.html')"><i class="fas fa-wallet"></i>DOMPET</div>
+  <div onclick="goToPage('Akun.html')"><i class="fas fa-cog"></i>PENGATURAN</div>
+  <div onclick="goToPage('Live Chat.html')"><i class="fas fa-comments"></i>BANTUAN</div>
+</div>
+
+  <!-- Tombol Logout -->
+  <div style="margin-top:30px; padding:12px; background:#b71c1c; border-radius:8px; text-align:center; cursor:pointer; color:#fff; font-weight:bold;"
+       onclick="logoutUser()">
+    <i class="fas fa-sign-out-alt" style="margin-right:8px;"></i> Logout
+  </div>
+</div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <a href="ui.html"><img src="https://img.icons8.com/ios-filled/50/ffffff/home.png">Home</a>
+  <a href="Deposit.html"><img src="https://img.icons8.com/ios-filled/50/ffffff/money.png">Deposit</a>
+  <a href="https://my.livechatinc.com/mobile-profile"><img src="https://img.icons8.com/ios-filled/50/ffffff/chat.png">Live Chat</a>
+  <a href="Akun.html"><img src="https://img.icons8.com/ios-filled/50/ffffff/user.png">Akun</a>
+</div>
+
+<!-- Footer -->
+<footer class="credit-rgb">© 2014-2025 Cair88. Copyrights 18+</footer>
+
+<script>
+  function logoutUser() {
+  localStorage.removeItem("loginSekarang");
+  window.location.href = "Daftar.html";
+}
+  
+  
+// User
+const user = localStorage.getItem("loginSekarang");
+if(!user){ alert("Silakan login."); window.location.href="Masuk.html"; }
+document.getElementById("username").innerText = user;
+document.getElementById("sidebar-username").innerText = user;
+document.getElementById("sidebar-saldo").innerText = (parseInt(localStorage.getItem("saldo_" + user)) || 0).toLocaleString("id-ID");
+
+// Sidebar toggle
+function toggleSidebar() { document.getElementById("sidebar").classList.toggle("open"); }
+
+// Page navigation
+function goToPage(file){ window.location.href = file; }
+
+// Launch game
+function launchGame(file){ window.location.href = file; }
+
+// Refresh saldo
+function refreshSaldo() {
+  const saldo = parseInt(localStorage.getItem("saldo_" + user)) || 0;
+  document.getElementById("saldo").innerText = saldo.toLocaleString("id-ID");
+  document.getElementById("sidebar-saldo").innerText = saldo.toLocaleString("id-ID");
+}
+
+// Top Up
+function topUp() { window.location.href="Deposit.html"; }
+
+// Notifications
+function showNotification(msg){
+  const container = document.getElementById('notificationContainer');
+  if(container.children.length>=10) return;
+  const notif=document.createElement('div'); notif.classList.add('notification'); notif.textContent=msg;
+  container.appendChild(notif);
+  setTimeout(()=>notif.remove(),3000);
+}
+
+// Game grid setup
+const games = [
+  {img:"MahjongWays1.jpg", name:"Mahjong Ways 1"},
+  {img:"MahjongWays2.jpg", name:"Mahjong Ways 2"},
+  {img:"MahjongWins3.jpg", name:"Mahjong Wins 3"},
+  {img:"Get Of Olympus.jpg", name:"Get OF Olympus"},
+  {img:"WildBountyShowdown.jpg", name:"Wild Bounty Showdown"},
+  {img:"Sweet Bonanza.jpg", name:"Sweet Bonanza"},
+  {img:"Spaceman.jpg", name:"Spaceman"},
+  {img:"astec.jpg", name:"Treasures OF Aztec"},
+  {img:"wild-bandito.jpg", name:"Wild Bandito"}
+];
+
+const gameGrid = document.getElementById("gameGrid");
+games.forEach((g,i)=>{
+  const card=document.createElement("div"); card.className="game-card";
+  const img=document.createElement("img"); img.src=g.img; img.alt=g.name;
+  const btn=document.createElement("button"); btn.className="play-button"; btn.textContent="Main"; btn.onclick=()=>launchGame("Game"+(i+1)+".html");
+  const p=document.createElement("p"); p.textContent=g.name;
+  card.appendChild(img); card.appendChild(btn); card.appendChild(p);
+  gameGrid.appendChild(card);
+});
+
+refreshSaldo();
+</script>
+
+</body>
+</html>

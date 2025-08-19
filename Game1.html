@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Saldo Tidak Cukup</title>
+  <style>
+    :root{
+      --bg: #ffffff;
+      --text: #0b0b0b;
+      --muted: #575757;
+      --purple-1: #6b21a8;
+      --purple-2: #9b5cf6;
+      --card: #ffffff;
+      --radius: 14px;
+      --glass: rgba(107,33,168,0.06);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial}
+    body{
+      display:grid;
+      place-items:center;
+      background:
+        linear-gradient(180deg, rgba(107,33,168,0.02), rgba(155,92,246,0.01)),
+        var(--bg);
+      color:var(--text);
+      padding:24px;
+    }
+
+    .card{
+      width:min(720px,96vw);
+      background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.98));
+      border-radius:var(--radius);
+      box-shadow: 0 10px 40px rgba(11,11,11,0.06);
+      display:flex;
+      gap:28px;
+      align-items:center;
+      padding:28px;
+      border: 1px solid rgba(11,11,11,0.04);
+    }
+
+    .icon-wrap{
+      min-width:84px;
+      height:84px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg, var(--purple-1), var(--purple-2));
+      color:white;
+      flex-shrink:0;
+      box-shadow: 0 8px 24px rgba(107,33,168,0.18);
+    }
+
+    .icon-wrap svg{width:40px;height:40px;display:block}
+
+    .content{flex:1;min-width:0}
+    .title{
+      margin:0 0 6px 0;
+      font-size:1.15rem;
+      font-weight:600;
+      letter-spacing: -0.01em;
+    }
+    .desc{
+      margin:0;
+      color:var(--muted);
+      font-size:0.95rem;
+      line-height:1.45;
+    }
+
+    .meta{
+      margin-top:12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .cta{
+      margin-left:auto;
+      display:flex;
+      gap:10px;
+    }
+
+    .btn{
+      -webkit-tap-highlight-color: transparent;
+      border:0;
+      padding:10px 14px;
+      border-radius:10px;
+      font-weight:600;
+      cursor:pointer;
+      font-size:0.95rem;
+      transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn-secondary{
+      background:transparent;
+      color:var(--text);
+      border:1px solid rgba(11,11,11,0.06);
+      box-shadow:none;
+    }
+    .btn-primary{
+      background: linear-gradient(90deg, var(--purple-1), var(--purple-2));
+      color:white;
+      box-shadow: 0 8px 20px rgba(155,92,246,0.15);
+      border: none;
+    }
+    .btn-primary[disabled]{opacity:0.6;cursor:not-allowed}
+
+    .note{font-size:0.85rem;color:var(--muted);margin-top:10px}
+
+    @media (max-width:640px){
+      .card{flex-direction:column;align-items:stretch;padding:18px;gap:16px}
+      .icon-wrap{width:72px;height:72px;margin:0 auto}
+      .cta{margin-left:0;justify-content:space-between}
+    }
+  </style>
+</head>
+<body>
+  <main class="card" role="main" aria-labelledby="title" aria-live="polite">
+    <div class="icon-wrap" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 7.75C3 6.231 4.231 5 5.75 5h12.5C19.769 5 21 6.231 21 7.75v8.5C21 17.769 19.769 19 18.25 19H5.75C4.231 19 3 17.769 3 16.25V7.75Z" stroke="rgba(255,255,255,0.9)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 11.5a1.25 1.25 0 100-2.5 1.25 1.25 0 000 2.5z" fill="rgba(255,255,255,0.95)"/>
+      </svg>
+    </div>
+
+    <div class="content">
+      <h1 id="title" class="title">Saldo Anda tidak cukup untuk melanjutkan</h1>
+      <p class="desc">Harap isi ulang saldo Anda terlebih dahulu agar bisa melanjutkan proses. Jika sudah melakukan top-up, coba muat ulang halaman atau periksa histori transaksi.</p>
+
+      <div class="meta">
+        <div style="font-size:0.9rem;color:var(--muted)">Metode isi ulang yang tersedia: <strong style="color:var(--text)">Transfer Bank • Kartu • E-Wallet</strong></div>
+
+        <div class="cta" role="group" aria-label="Tindakan">
+          <button class="btn btn-secondary" id="backBtn" type="button" onclick="onBack()">Kembali</button>
+          <button class="btn btn-primary" id="topupBtn" type="button" onclick="onTopUp()">Isi Ulang</button>
+        </div>
+      </div>
+
+      <div class="note" id="note" aria-hidden="true">Butuh bantuan? <a href="Live Chat.html" style="color:var(--purple-1);text-decoration:none">hubungi support</a></div>
+    </div>
+  </main>
+
+  <script>
+    function onTopUp(){
+      window.location.href = "Deposit.html";
+    }
+
+    function onBack(){
+      window.location.href = "ui.html";
+    }
+  </script>
+</body>
+</html>

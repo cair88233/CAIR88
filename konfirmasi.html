@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Pembayaran//Cair88//deposit</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: black;
+      font-family: 'Poppins', sans-serif;
+      color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container {
+      background-color: #282828;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0px 10px 500px #d3d;
+    }
+
+    h3 {
+      font-weight: 500;
+      font-size: 18px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255,255,255,0.3);
+      border-top: 5px solid #d3d;
+      border-radius: 50%;
+      animation: spin 2.53s linear infinite;
+      margin: 20px auto;
+    }
+
+    .text-loading {
+      font-size: 16px;
+      font-weight: 500;
+      animation: blink 1.5s infinite;
+    }
+
+    h5 {
+      margin-top: 20px;
+      font-weight: 300;
+      color: #ccc;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h3>Pembayaran Sedang Diproses. Segera Selesaikan Pembayaran Untuk Melanjutkan.</h3>
+    <div class="spinner"></div>
+    <div class="text-loading">Menunggu Pembayaran...</div>
+    <h5>Jika sudah selesai pembayaran, muat ulang halaman.</h5>
+  </div>
+</body>
+</html>

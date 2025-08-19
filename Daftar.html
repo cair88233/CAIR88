@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daftar//cair88//com</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .form-container {
+      background: #222;
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 12px;
+      box-sizing: border-box;
+     box-shadow: 0px 10px 500px #d3d;
+    }
+
+    input, select {
+      width: 90%;
+      padding: 10px;
+      margin: 6px auto;
+      border-radius: 6px;
+      border: none;
+    }
+
+    label {
+      text-align: left;
+      display: block;
+      margin: 10px 0 5px 5%;
+    }
+
+    small {
+      display: block;
+      margin-top: -5px;
+      color: #aaa;
+      font-size: 0.8em;
+      text-align: left;
+      margin-left: 5%;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-top: 10px;
+      padding-left: 0;
+    }
+
+    .checkbox-line {
+      display: flex;
+      align-items: center;
+      margin: 8px 0;
+      width: 100%;
+    }
+
+    .checkbox-line input[type="checkbox"] {
+      margin-left: 0;
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+
+    .checkbox-line label {
+      margin: 0;
+      font-size: 0.9em;
+      line-height: 1.2;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      background: #ab47bc;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #ab47bc;
+    }
+    
+        .link-register {
+      font-size: 0.9em;
+      margin-top: 12px;
+      color: #ccc;
+    }
+
+    .link-register a {
+      color: #ffd54f;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+
+  <div class="form-container">
+    <label>Username</label>
+    <input type="text" id="regUsername" placeholder="Username" />
+
+    <label>Password</label>
+    <input type="password" id="regPassword1" placeholder="Password" />
+
+    <label>Ulangi Password</label>
+    <input type="password" id="regPassword2" placeholder="Ulangi Password" />
+
+    <label>Email</label>
+    <input type="email" id="regEmail" placeholder="Email aktif" />
+
+    <label>Nomor Telepon</label>
+    <input type="tel" id="regPhone" placeholder="08xxxxxxxxxx" />
+    <small>*Digunakan untuk reset sandi jika lupa</small>
+
+    <hr style="margin: 15px 0; border-color: #444;">
+
+    <label>Nama Bank</label>
+    <select id="regBank">
+      <option value="">-- Pilih Bank --</option>
+      <option>BCA</option>
+      <option>BRI</option>
+      <option>BNI</option>
+      <option>BSI</option>
+      <option>CIMB</option>
+      <option>DANA</option>
+      <option>GOPAY</option>
+      <option>OVO</option>
+    </select>
+
+    <label>Nama Rekening</label>
+    <input type="text" id="regNamaRekening" placeholder="Nama lengkap rekening" />
+
+    <label>Nomor Rekening</label>
+    <input type="text" id="regNoRekening" placeholder="1234567890" />
+
+    <label>Verifikasi: <span id="captchaText" style="color: #ffd54f;"></span></label>
+    <input type="text" id="captchaInput" placeholder="Ketik kode di atas" />
+
+    <!-- ✅ Checkbox mepet kiri -->
+    <div class="checkbox-group">
+      <div class="checkbox-line">
+        <input type="checkbox" id="check1">
+        <label for="check1">Saya bersedia menerima email dan promosi</label>
+      </div>
+      <div class="checkbox-line">
+        <input type="checkbox" id="check2">
+        <label for="check2">Cair88 adalah situs yang aman dan privasi</label>
+      </div>
+      <div class="checkbox-line">
+        <input type="checkbox" id="check3">
+        <label for="check3">Saya setuju dengan peraturan yang berlaku</label>
+      </div>
+    </div>
+
+    <!-- Tombol Daftar dan Login -->
+    <div class="button-group">
+      <button onclick="register()">Daftar</button>
+    </div>
+  </div>
+
+    <div class="link-register">
+      Jika anda sudah memiliki akun <a href="Masuk.html">Klik Disini</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("captchaText").innerText = generateCaptcha();
+
+    function generateCaptcha() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ123456789';
+      let cap = '';
+      for (let i = 0; i < 5; i++) {
+        cap += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return cap;
+    }
+
+    function goToLogin() {
+      window.location.href = "Masuk.html"; // Ganti dengan halaman login Anda
+    }
+
+    function register() {
+      const u = document.getElementById('regUsername').value.trim();
+      const p1 = document.getElementById('regPassword1').value;
+      const p2 = document.getElementById('regPassword2').value;
+      const email = document.getElementById('regEmail').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      const bank = document.getElementById('regBank').value;
+      const namaRek = document.getElementById('regNamaRekening').value.trim();
+      const noRek = document.getElementById('regNoRekening').value.trim();
+      const c = document.getElementById('captchaInput').value.toUpperCase();
+      const cText = document.getElementById('captchaText').innerText;
+
+      const ch1 = document.getElementById('check1').checked;
+      const ch2 = document.getElementById('check2').checked;
+      const ch3 = document.getElementById('check3').checked;
+
+      if (!u || !p1 || !p2 || !email || !phone || !bank || !namaRek || !noRek || !c) {
+        alert("❌ Semua field wajib diisi.");
+        return;
+      }
+      if (p1 !== p2) {
+        alert("❌ Password tidak cocok.");
+        return;
+      }
+      if (c !== cText) {
+        alert("❌ Kode verifikasi salah.");
+        return;
+      }
+      if (!ch3) {
+        alert("❌ Anda harus menyetujui peraturan.");
+        return;
+      }
+      if (localStorage.getItem("akun_" + u)) {
+        alert("❌ Username sudah terdaftar.");
+        return;
+      }
+
+      const akun = {
+        username: u,
+        password: p1,
+        email: email,
+        phone: phone,
+        bank: bank,
+        namaRekening: namaRek,
+        nomorRekening: noRek,
+        setujuPromosi: ch1,
+        cair88: ch2,
+        setujuPeraturan: ch3
+      };
+      localStorage.setItem("akun_" + u, JSON.stringify(akun));
+      localStorage.setItem("saldo_" + u, 0);
+      localStorage.setItem("loginSekarang", u);
+      alert("✅ Akun berhasil dibuat!");
+      window.location.href = "ui.html";
+    }
+    const akun = {
+  username: u,
+  password: p1,
+  email: email,
+  phone: phone,
+  bank: bank,
+  namaRekening: namaRek,
+  nomorRekening: noRek,
+};
+localStorage.setItem("akun_" + u, JSON.stringify(akun));
+    
+    
+  </script>
+
+</body>
+</html>

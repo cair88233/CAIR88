@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UI Minimal + Saldo Tengah + Info Akun + Togel</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; color:#fff; font-family:sans-serif; min-height:100vh; }
+
+/* Topbar */
+.topbar { display:flex; justify-content:space-between; align-items:center; background:#222; padding:10px 20px; position:fixed; top:0; width:100%; z-index:999; height:60px; }
+.topbar .logo { height:50px; }
+
+/* Hamburger */
+.menu-icon { width:35px; height:28px; display:flex; flex-direction:column; justify-content:space-between; cursor:pointer; }
+.menu-icon div { height:5px; background:#fff; border-radius:3px; width:100%; }
+
+/* Sidebar */
+.sidebar { position:fixed; top:0; right:-300px; width:300px; height:100%; background:#333; transition:right 0.3s ease; padding:80px 20px 20px 20px; box-sizing:border-box; z-index:999; }
+.sidebar.open { right:0; }
+.sidebar .close-btn { font-size:28px; color:#fff; cursor:pointer; text-align:right; margin-bottom:15px; }
+.sidebar-user-info { background:#222; padding:10px 15px; border-radius:8px; margin-bottom:15px; font-size:14px; color:#fff; text-align:center; }
+.sidebar .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:15px; }
+.sidebar .grid div { background:#444; height:80px; border-radius:10px; display:flex; flex-direction:column; justify-content:center; align-items:center; cursor:pointer; font-size:14px; transition:background 0.3s; color:#fff; }
+.sidebar .grid div i { font-size:28px; margin-bottom:5px; }
+.sidebar .grid div:hover { background:#555; }
+
+/* Bottom nav */
+.bottom-nav { position:fixed; bottom:0; width:100%; height:70px; background-color:#6a1b9a; display:flex; justify-content:space-around; align-items:center; z-index:999; }
+.bottom-nav a { text-align:center; color:white; text-decoration:none; font-size:12px; flex-grow:1; display:flex; flex-direction:column; align-items:center; padding:8px 0; }
+.bottom-nav a:hover { background-color:#7e3ab9; }
+.bottom-nav img { width:24px; height:24px; margin-bottom:4px; }
+
+/* Konten tengah */
+.main-content { display:flex; flex-direction:column; justify-content:flex-start; align-items:center; min-height:100vh; padding-top:80px; padding-bottom:100px; gap:20px; width:100%; }
+
+/* Box info akun */
+.info-box { background:#1a1a1a; border-radius:10px; padding:15px 20px; max-width:500px; width:90%; text-align:left; box-shadow:0 4px 15px rgba(0,0,0,0.5); font-size:16px; }
+.info-box p { margin:8px 0; display:flex; justify-content:space-between; }
+.info-box strong { color: white; font-size:18px; }
+
+/* Box saldo */
+.saldo-box { background: #1a1a1a; border-radius: 10px; padding: 20px; max-width: 500px; width:90%; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+.saldo-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.saldo-header h3 { margin: 0; font-size: 18px; }
+.saldo-value { font-size: 28px; margin-bottom: 15px; font-weight: bold; }
+.btn-row { display: flex; gap: 10px; }
+.btn { flex: 1; padding: 10px; border-radius: 5px; border: none; font-size: 16px; cursor: pointer; }
+.btn-withdraw { background: transparent; border: 1px solid #6a1b9a; color: white; }
+.btn-deposit { background: #6a1b9a; color: white; }
+
+/* Section Togel */
+.togel-section { margin-top: 30px; max-width: 500px; width: 90%; }
+.togel-section h3 { text-align:center; margin-bottom:15px; color:#fff; }
+
+/* Grid 6 kotak tema Togel */
+.togel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+
+/* Kotak Togel baru */
+.togel-box {
+  background: linear-gradient(145deg,#333,#111);
+  border: 2px solid #6a1b9a;
+  border-radius: 12px;
+  height: 120px;
+  font-weight: bold;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+  font-size: 18px;
+  text-align:center;
+}
+.togel-box:hover { transform: scale(1.05); background: #6a1b9a; }
+.togel-box .title { font-size: 16px; margin-bottom:5px; }
+.togel-box .timer { font-size: 14px; color:#ffeb3b; }
+
+.title-text { color: orange; }
+
+/* Kredit di bawah Togel */
+.credit-text { margin-top: 20px; color: white; font-size: 14px; text-align: center; }
+
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="menu-icon" onclick="toggleSidebar()"><div></div><div></div><div></div></div>
+  <img src="logo.png" alt="Logo" class="logo">
+  <div style="width:30px;"></div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="close-btn" onclick="toggleSidebar()">×</div>
+  <div class="sidebar-user-info">
+    <p><strong>Username: <span id="sidebar-username">...</span></strong></p>
+    <p>Balance: Rp <span id="sidebar-saldo">0</span></p>
+  </div>
+  <div class="grid">
+    <div onclick="goToPage('RTP.html')"><i class="fas fa-chart-line"></i>RTP</div>
+    <div onclick="alert('Deposit 20.000 pertama bisa di akses!')"><i class="fas fa-gift"></i>FREE SPINS</div>
+    <div onclick="alert('Deposit minimal 50.000 agar bisa di akses!')"><i class="fas fa-percent"></i>PROMO</div>
+    <div onclick="goToPage('Akun.html')"><i class="fas fa-wallet"></i>DOMPET</div>
+    <div onclick="goToPage('Akun.html')"><i class="fas fa-cog"></i>PENGATURAN</div>
+    <div onclick="goToPage('Live Chat.html')"><i class="fas fa-comments"></i>BANTUAN</div>
+  </div>
+  <div style="margin-top:30px; padding:12px; background:#b71c1c; border-radius:8px; text-align:center; cursor:pointer; color:#fff; font-weight:bold;"
+       onclick="logoutUser()">
+    <i class="fas fa-sign-out-alt" style="margin-right:8px;"></i> Logout
+  </div>
+</div>
+
+<!-- Konten Utama -->
+<div class="main-content">
+  <!-- Info Akun -->
+  <div class="info-box">
+    <p><strong>Username:</strong> <span id="akun-username">Guest</span></p>
+    <p><strong>No. Telepon:</strong> <span id="akun-telfon">-</span></p>
+    <p><strong>Email:</strong> <span id="akun-email">-</span></p>
+    <p><strong>Bank:</strong> <span id="akun-bank">-</span></p>
+    <p><strong>Nama Rekening:</strong> <span id="akun-nama-rekening">-</span></p>
+    <p><strong>No. Rekening:</strong> <span id="akun-rekening">-</span></p>
+    <p><strong>Saldo:</strong> <span id="akun-saldo">0</span></p>
+  </div>
+
+  <!-- Saldo -->
+  <div class="saldo-box">
+    <div class="saldo-header">
+      <h3>Saldo Akun</h3>
+      <i id="toggleSaldo" class="fa-solid fa-eye" style="cursor:pointer;"></i>
+    </div>
+    <div id="saldo" class="saldo-value">IDR 0</div>
+    <div class="btn-row">
+      <button id="btnWithdraw" class="btn btn-withdraw">Withdraw</button>
+      <button id="btnDeposit" class="btn btn-deposit">Deposit</button>
+    </div>
+  </div>
+
+  <!-- Grid Togel -->
+  <div class="togel-section">
+    <h3>Togel</h3>
+    <div class="togel-grid">
+      <div class="togel-box" onclick="goToBlank()">
+        <div class="title">KINGKONG 4D</div>
+        <div class="title-text">6384</div>
+        <div class="timer" id="timer1">0:00:00</div>
+      </div>
+      <div class="togel-box" onclick="goToBlank()">
+        <div class="title">5D TOTO MACU</div>
+        <div class="title-text">0845</div>
+        <div class="timer" id="timer2">32:45:00</div>
+      </div>
+      <div class="togel-box" onclick="goToBlank()">
+        <div class="title">SINGAPURE</div>
+        <div class="title-text">5439</div>
+        <div class="timer" id="timer3">10:00:00</div>
+      </div>
+      <div class="togel-box" onclick="goToBlank()">
+        <div class="title">IQOU</div>
+        <div class="title-text">7342</div>
+        <div class="timer" id="timer4">10:00:00</div>
+      </div>
+      <div class="togel-box" onclick="goToBlank()">
+        <div class="title">BURMA</div>
+        <div class="title-text">9801</div>
+        <div class="timer" id="timer5">10:00:00</div>
+      </div>
+      <div class="togel-box" onclick="goToBlank()">
+        <div class="title">PHILIPPINES</div>
+        <div class="title-text">2184</div>
+        <div class="timer" id="timer6">10:00:00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kredit -->
+  <div class="credit-text">
+    © 2014-2025 Cair88. Copyrights 18+
+  </div>
+</div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <a href="ui.html"><img src="https://img.icons8.com/ios-filled/50/ffffff/home.png">Home</a>
+  <a href="Deposit.html"><img src="https://img.icons8.com/ios-filled/50/ffffff/money.png">Deposit</a>
+  <a href="https://my.livechatinc.com/mobile-profile"><img src="https://img.icons8.com/ios-filled/50/ffffff/chat.png">Live Chat</a>
+  <a href="Akun.html"><img src="https://img.icons8.com/ios-filled/50/ffffff/user.png">Akun</a>
+</div>
+
+<script>
+// Logout
+function logoutUser() { localStorage.removeItem("loginSekarang"); window.location.href = "Daftar.html"; }
+
+// Ambil data user & saldo
+const user = localStorage.getItem("loginSekarang") || "Guest";
+const akunData = localStorage.getItem("akun_" + user);
+if(akunData){
+  const akun = JSON.parse(akunData);
+  document.getElementById("akun-username").innerText = akun.username || "-";
+  document.getElementById("akun-telfon").innerText = akun.telfon || "-";
+  document.getElementById("akun-email").innerText = akun.email || "-";
+  document.getElementById("akun-bank").innerText = akun.bank || "-";
+  document.getElementById("akun-rekening").innerText = akun.nomorRekening || "-";
+  document.getElementById("akun-nama-rekening").innerText = akun.namaRekening || "-";
+}else{ alert("Data akun tidak ditemukan."); }
+
+const saldo = localStorage.getItem("saldo_" + user) || "0";
+document.getElementById("akun-saldo").innerText = parseInt(saldo).toLocaleString("id-ID");
+document.getElementById("sidebar-username").innerText = user;
+document.getElementById("sidebar-saldo").innerText = parseInt(saldo).toLocaleString("id-ID");
+
+// Sidebar toggle
+function toggleSidebar(){ document.getElementById("sidebar").classList.toggle("open"); }
+function goToPage(file){ window.location.href = file; }
+
+// Toggle saldo
+let saldoVisible = true;
+const saldoEl = document.getElementById('saldo');
+const toggleBtn = document.getElementById('toggleSaldo');
+const saldoAsli = "IDR " + parseInt(saldo).toLocaleString("id-ID");
+toggleBtn.addEventListener('click', ()=>{
+  saldoVisible = !saldoVisible;
+  saldoEl.textContent = saldoVisible ? saldoAsli : "IDR ***";
+  toggleBtn.classList.toggle('fa-eye');
+  toggleBtn.classList.toggle('fa-eye-slash');
+});
+
+// Tombol navigasi
+document.getElementById("btnWithdraw").addEventListener("click", ()=>window.location.href="withdraw.html");
+document.getElementById("btnDeposit").addEventListener("click", ()=>window.location.href="deposit.html");
+
+// Togel klik
+function goToBlank(){ window.location.href="blank.html"; }
+
+// Timer acak tiap kotak antara 8-12 jam
+const timers = ["timer1","timer2","timer3","timer4","timer5","timer6"];
+const countdowns = timers.map(()=> (Math.floor(Math.random() * 5) + 8) * 3600); // 8-12 jam
+
+function updateTimers(){
+  timers.forEach((id,index)=>{
+    let c = countdowns[index];
+    const jam = String(Math.floor(c/3600)).padStart(2,'0');
+    const menit = String(Math.floor((c%3600)/60)).padStart(2,'0');
+    const detik = String(c%60).padStart(2,'0');
+    document.getElementById(id).textContent = `${jam}:${menit}:${detik}`;
+    if(c>0) countdowns[index]--;
+  });
+  setTimeout(updateTimers,1000);
+}
+
+updateTimers();
+</script>
+
+</body>
+</html>

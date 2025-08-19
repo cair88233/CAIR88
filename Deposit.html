@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deposit - Pilih Nominal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== TOPBAR ===== */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #222;
+      padding: 10px 20px;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 999;
+    }
+    .topbar .logo { height: 50px; }
+
+    .menu-icon {
+      width: 35px; height: 28px; display: flex; flex-direction: column;
+      justify-content: space-between; cursor: pointer;
+    }
+    .menu-icon div {
+      height: 5px; background: #fff; border-radius: 3px; width: 100%;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      position: fixed; top: 0; right: -300px; width: 300px; height: 100%;
+      background: #333; transition: right 0.3s ease; padding: 20px; box-sizing: border-box; z-index: 999;
+    }
+    .sidebar.open { right: 0; }
+    .sidebar .close-btn {
+      font-size: 28px; color: #fff; cursor: pointer; text-align: right; margin-bottom: 15px;
+    }
+    .sidebar-user-info {
+      background:#222; padding:10px 15px; border-radius:8px; margin-bottom:15px;
+      font-size:14px; color:#fff; text-align:center;
+    }
+    .sidebar .grid {
+      display:grid; grid-template-columns:repeat(2,1fr); gap:15px;
+    }
+    .sidebar .grid div {
+      background:#444; height:80px; border-radius:10px;
+      display:flex; flex-direction:column; justify-content:center; align-items:center;
+      cursor:pointer; font-size:14px; transition:background 0.3s; color:#fff;
+    }
+    .sidebar .grid div i { font-size:28px; margin-bottom:5px; }
+    .sidebar .grid div:hover { background:#555; }
+
+    /* ===== BOTTOM NAV ===== */
+    .bottom-nav {
+      position: fixed; bottom: 0; width: 100%; height: 70px; background-color: #6a1b9a;
+      display: flex; justify-content: space-around; align-items: center; z-index: 999;
+    }
+    .bottom-nav a {
+      text-align: center; color: white; text-decoration: none; font-size: 12px; flex-grow: 1;
+      display: flex; flex-direction: column; align-items: center; padding: 8px 0;
+    }
+    .bottom-nav a:hover { background-color: #7e3ab9; }
+    .bottom-nav img { width: 24px; height: 24px; margin-bottom: 4px; }
+
+    /* ===== MAIN CONTENT ===== */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 90px 0 90px; /* beri jarak atas & bawah karena topbar dan bottom-nav */
+      overflow-y: auto;
+    }
+
+    .payment-container { display: flex; gap: 20px; margin-bottom: 20px; }
+    .payment-option {
+      background-color: #222; border: 2px solid transparent; border-radius: 10px;
+      padding: 10px 25px; width: 160px; text-align: center; cursor: pointer;
+      transition: 0.3s; position: relative;
+    }
+    .payment-option.selected { border-color: #7c3aed; background-color: #333; }
+    .payment-option svg { width: 24px; height: 24px; fill: white; margin-bottom: 6px; }
+    .payment-option p { font-size: 13px; margin: 0; }
+
+    .payment-option.qris::after,
+    .payment-option.transfer::after {
+      content: ''; position: absolute; top: 6px; right: 6px;
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .payment-option.qris::after { background-color: red; }
+    .payment-option.transfer::after { background-color: limegreen; }
+
+    .grid-container {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
+      width: 90%; max-width: 600px; margin-bottom: 20px;
+    }
+    .grid-item {
+      background-color: #222; border-radius: 10px; padding: 10px; text-align: center;
+      border: 2px solid transparent; cursor: pointer; transition: 0.3s;
+    }
+    .grid-item.selected { border-color: #7c3aed; background-color: #60a5fa; }
+    .grid-item p { margin-top: 8px; font-size: 14px; }
+
+    .nominal-container {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;
+      width: 90%; max-width: 600px; margin-bottom: 20px;
+    }
+    .nominal-option {
+      background-color: #222; border-radius: 10px; padding: 12px;
+      text-align: center; cursor: pointer; border: 2px solid transparent;
+      transition: 0.3s; font-size: 14px;
+    }
+    .nominal-option.selected { border-color: #ab47bc; background-color: #60a5fa; }
+
+    .input-container { width: 90%; max-width: 600px; }
+
+    label { font-size: 16px; display: block; margin-bottom: 6px; }
+    input[type="number"] {
+      width: 100%; padding: 6px 10px; font-size: 14px;
+      border: 2px solid #fff; border-radius: 6px; background-color: #111; color: #fff;
+    }
+    input[type="number"]::placeholder { color: #888; }
+
+    .btn-lanjut {
+      margin-top: 15px; padding: 10px 20px;
+      background-color: #ab47bc; color: white;
+      border: none; border-radius: 6px; cursor: pointer; font-size: 16px;
+    }
+
+    .copy-btn {
+      padding: 6px 12px; font-size: 13px; cursor: pointer;
+      background: #222; border: 1px solid #888; color: #fff;
+      border-radius: 6px; margin-left: 10px;
+    }
+
+    /* ===== NOTIFICATION ===== */
+    .notification-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+    .notification {
+      padding: 12px 20px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      opacity: 0;
+      transform: translateX(100%);
+      transition: all 0.4s ease;
+    }
+    .notification.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .success { background: #28a745; }
+    .error { background: #dc3545; }
+  </style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="menu-icon" onclick="toggleSidebar()"><div></div><div></div><div></div></div>
+  <img src="logo.png" alt="Logo" class="logo">
+  <div style="width:30px;"></div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="close-btn" onclick="toggleSidebar()">×</div>
+  <div class="sidebar-user-info">
+    <p><strong>Username: <span id="sidebar-username">...</span></strong></p>
+    <p>Balance: Rp <span id="sidebar-saldo">0</span></p>
+  </div>
+  <div class="grid">
+    <div onclick="goToPage('RTP.html')"><i class="fas fa-chart-line"></i>RTP</div>
+    <div onclick="showNotification('Deposit 20.000 pertama bisa di akses!', 'error')"><i class="fas fa-gift"></i>FREE SPINS</div>
+    <div onclick="showNotification('Deposit minimal 50.000 agar bisa di akses!', 'error')"><i class="fas fa-percent"></i>PROMO</div>
+    <div onclick="goToPage('Akun.html')"><i class="fas fa-wallet"></i>DOMPET</div>
+    <div onclick="goToPage('Akun.html')"><i class="fas fa-cog"></i>PENGATURAN</div>
+    <div onclick="goToPage('Live Chat.html')"><i class="fas fa-comments"></i>BANTUAN</div>
+  </div>
+</div>
+
+<main>
+  <!-- konten deposit -->
+  <div class="payment-container">
+    <div class="payment-option transfer" onclick="selectPayment(this)">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2 2 7h20L12 2zM4 10v10h2v-6h2v6h2v-6h4v6h2v-6h2v6h2V10H4z"/></svg>
+      <p>Transfer Bank</p>
+    </div>
+    <div class="payment-option qris" onclick="selectPayment(this)">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm6 0h2v2h-2V5zm0 4h2v2h-2V9zm4-4h6v6h-6V5zm2 2v2h2V7h-2zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm10-2h2v2h-2v-2zm4 0h2v2h-2v-2zm-4 4h2v2h-2v-2zm0 4h6v2h-6v-2zm4-4h2v4h-2v-4z"/></svg>
+      <p>QRIS</p>
+    </div>
+  </div>
+
+  <div class="grid-container">
+    <div class="grid-item" onclick="selectBonus(this)"><p>No Bonus</p></div>
+    <div class="grid-item" onclick="selectBonus(this)"><p>Bonus Spin Gratis</p></div>
+    <div class="grid-item" onclick="selectBonus(this)"><p>Deposit 100k Bonus 150k</p></div>
+    <div class="grid-item" onclick="selectBonus(this)"><p>Free Spin PG Soft</p></div>
+    <div class="grid-item" onclick="selectBonus(this)"><p>Bonus Spin Pragmatic Play</p></div>
+    <div class="grid-item" onclick="selectBonus(this)"><p>Deposit 500k Bonus 450k</p></div>
+  </div>
+
+  <div class="nominal-container">
+    <div class="nominal-option" onclick="selectNominal(this)">20.000</div>
+    <div class="nominal-option" onclick="selectNominal(this)">50.000</div>
+    <div class="nominal-option" onclick="selectNominal(this)">100.000</div>
+    <div class="nominal-option" onclick="selectNominal(this)">150.000</div>
+    <div class="nominal-option" onclick="selectNominal(this)">200.000</div>
+    <div class="nominal-option" onclick="selectNominal(this)">250.000</div>
+    <div class="nominal-option" onclick="selectNominal(this)">500.000</div>
+    <div class="nominal-option" onclick="selectNominal(this)">1.000.000</div>
+  </div>
+
+  <div class="input-container" style="margin-top: 10px; font-size: 16px; line-height: 1.8; border: 1px solid #888; padding: 15px; border-radius: 8px; background-color: rgba(255,255,255,0.05);">
+    <p><strong>Nama Bank</strong>        : DANA</p>
+    <p><strong>Nama Rekening</strong> : Tidak Ada</p>
+    <p style="display: flex; justify-content: space-between; align-items: center;">
+      <span><strong>Nomor Rekening</strong>: <span id="noRek">083166597997</span></span>
+      <button onclick="salinRekening()" class="copy-btn">Salin</button>
+    </p>
+  </div>
+
+  <div class="input-container" style="margin-top: 20px;">
+    <label for="jumlah">Jumlah Deposit</label>
+    <input type="number" id="jumlah" min="10000" placeholder="Masukkan minimal 10.000" />
+    <button class="btn-lanjut" onclick="cekDeposit()">Lanjutkan</button>
+  </div>
+</main>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <a href="ui.html"><img src="https://img.icons8.com/ios-filled/50/ffffff/home.png">Home</a>
+  <a href="Deposit.html"><img src="https://img.icons8.com/ios-filled/50/ffffff/money.png">Deposit</a>
+  <a href="https://my.livechatinc.com/mobile-profile"><img src="https://img.icons8.com/ios-filled/50/ffffff/chat.png">Live Chat</a>
+  <a href="Akun.html"><img src="https://img.icons8.com/ios-filled/50/ffffff/user.png">Akun</a>
+</div>
+
+<!-- Notification Container -->
+<div class="notification-container" id="notifContainer"></div>
+
+<script>
+  const user = localStorage.getItem("loginSekarang") || "Guest";
+  document.getElementById("sidebar-username").innerText = user;
+  document.getElementById("sidebar-saldo").innerText =
+    (parseInt(localStorage.getItem("saldo_" + user)) || 0).toLocaleString("id-ID");
+
+  function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("open");
+  }
+  function goToPage(file) { window.location.href = file; }
+
+  function selectBonus(el) {
+    document.querySelectorAll('.grid-item').forEach(item => item.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+  function selectPayment(el) {
+    document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+  function selectNominal(el) {
+    document.querySelectorAll('.nominal-option').forEach(opt => opt.classList.remove('selected'));
+    el.classList.add('selected');
+    let nominal = el.innerText.replace(/\./g, '');
+    document.getElementById("jumlah").value = nominal;
+  }
+
+  // Notifikasi
+  function showNotification(message, type) {
+    const container = document.getElementById("notifContainer");
+
+    const notif = document.createElement("div");
+    notif.classList.add("notification", type);
+    notif.innerText = message;
+
+    container.appendChild(notif);
+
+    setTimeout(() => notif.classList.add("show"), 10);
+
+    setTimeout(() => {
+      notif.classList.remove("show");
+      setTimeout(() => notif.remove(), 400);
+    }, 3000);
+  }
+
+  function cekDeposit() {
+    const jumlah = parseInt(document.getElementById("jumlah").value);
+    if (jumlah < 10000 || isNaN(jumlah)) {
+      showNotification("Minimal deposit adalah 10.000!", "error");
+      return;
+    }
+
+    const selectedPayment = document.querySelector('.payment-option.selected');
+    if (!selectedPayment) { 
+      showNotification("Silakan pilih metode pembayaran terlebih dahulu!", "error"); 
+      return; 
+    }
+
+    showNotification("Sukses Lanjutkan Segera Pembayaran!", "success");
+
+    setTimeout(() => {
+      if (selectedPayment.classList.contains('transfer')) {
+        window.location.href = "bank.html";
+      } else if (selectedPayment.classList.contains('qris')) {
+        window.location.href = "qris.html";
+      } else {
+        showNotification("Metode pembayaran tidak dikenali!", "error");
+      }
+    }, 1500);
+  }
+
+  function salinRekening() {
+    const noRek = document.getElementById("noRek").innerText;
+    navigator.clipboard.writeText(noRek).then(() => {
+      showNotification("Nomor rekening berhasil disalin!", "success");
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  font-size: 37px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #fff;
+  transition: transform 0.2s ease;
+}
+.close-btn:hover {
+  color: #ff4081;
+  transform: scale(1.2);
+}
+.topbar {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background: #222;
+  padding: 10px 20px;
+}
+
+.logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 30px;
+}
+
+.menu-icon {
+  cursor: pointer;
+  width: 30px;
+  height: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.menu-icon div {
+  height: 4px;
+  background: #fff;
+  border-radius: 2px;
+}
+.box {
+  background: #222;
+  padding: 200px;
+  max-width: 360px;
+  width: 90%;
+  margin: 0 16px;
+  border-radius: 12px;
+  text-align: center;
+}

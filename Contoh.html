@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div class="slider-container" style="position: relative; width: 100%; height: 300px; overflow: hidden;">
+  <div class="slides">
+    <img src="https://picsum.photos/id/1011/200/160" alt="1" />
+    <img src="https://picsum.photos/id/1012/200/160" alt="2" />
+    <img src="https://picsum.photos/id/1013/200/160" alt="3" />
+    <img src="https://picsum.photos/id/1014/200/160" alt="4" />
+    <img src="https://picsum.photos/id/1015/200/160" alt="5" />
+    <img src="https://picsum.photos/id/1016/200/160" alt="6" />
+  </div>
+</div>
+
+<style>
+  .slides {
+    display: flex;
+    width: max-content; /* supaya panjang sesuai jumlah gambar */
+    height: 80%;
+    transition: transform 0.3s ease-out;
+    cursor: grab;
+  }
+  .slides:active {
+    cursor: grabbing;
+    transition: none;
+  }
+
+  .slides img {
+    width: 10%;
+    height: 80%;
+    object-fit: cover;
+    flex-shrink: 0;
+    user-select: none;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  const slides = document.querySelector('.slides');
+
+  let isDown = false;
+  let startX;
+  let scrollLeft;
+
+  slides.addEventListener('mousedown', (e) => {
+    isDown = true;
+    slides.style.transition = 'none'; // hilangkan animasi saat drag
+    startX = e.pageX - slides.offsetLeft;
+    scrollLeft = getTranslateX(slides);
+  });
+
+  slides.addEventListener('mouseleave', () => {
+    isDown = false;
+    slides.style.transition = 'transform 0.3s ease-out';
+  });
+
+  slides.addEventListener('mouseup', () => {
+    isDown = false;
+    slides.style.transition = 'transform 0.3s ease-out';
+  });
+
+  slides.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+
+    const x = e.pageX - slides.offsetLeft;
+    const walk = x - startX; // jarak geser dari awal klik
+    let newTranslateX = scrollLeft + walk;
+
+    // Batasi geser supaya gak keluar container
+    const maxTranslate = 0;
+    const minTranslate = -(slides.scrollWidth - slides.parentElement.clientWidth);
+
+    if (newTranslateX > maxTranslate) newTranslateX = maxTranslate;
+    if (newTranslateX < minTranslate) newTranslateX = minTranslate;
+
+    slides.style.transform = `translateX(${newTranslateX}px)`;
+  });
+
+  // Fungsi helper untuk baca nilai translateX saat ini
+  function getTranslateX(element) {
+    const style = window.getComputedStyle(element);
+    const matrix = new WebKitCSSMatrix(style.transform);
+    return matrix.m41;
+  }
+
+  // --- Untuk touch events (mobile) ---
+  slides.addEventListener('touchstart', (e) => {
+    isDown = true;
+    slides.style.transition = 'none';
+    startX = e.touches[0].pageX - slides.offsetLeft;
+    scrollLeft = getTranslateX(slides);
+  });
+
+  slides.addEventListener('touchend', () => {
+    isDown = false;
+    slides.style.transition = 'transform 0.3s ease-out';
+  });
+
+  slides.addEventListener('touchmove', (e) => {
+    if (!isDown) return;
+    const x = e.touches[0].pageX - slides.offsetLeft;
+    const walk = x - startX;
+    let newTranslateX = scrollLeft + walk;
+
+    const maxTranslate = 0;
+    const minTranslate = -(slides.scrollWidth - slides.parentElement.clientWidth);
+
+    if (newTranslateX > maxTranslate) newTranslateX = maxTranslate;
+    if (newTranslateX < minTranslate) newTranslateX = minTranslate;
+
+    slides.style.transform = `translateX(${newTranslateX}px)`;
+  });
+</script>
+</body>
+</html>
