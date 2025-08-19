@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cair 88 daftar//masuk</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .home-image {
+            max-width: 250px;
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .masuk {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .masuk:hover {
+            background-color: #45a049;
+        }
+
+        .daftar {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .daftar:hover {
+            background-color: #1976D2;
+        }
+    </style>
+</head>
+<body>
+<!-- Marquee RGB -->
+<div class="marquee">
+  <div class="marquee__track">
+    <div class="marquee__item">⚡ SELAMAT DATANG — DAFTAR & MASUK SEKARANG! ⚡</div>
+
+
+    <!-- Duplikat konten untuk loop mulus -->
+    <div class="marquee__item">⚡ SELAMAT DATANG — DAFTAR & MASUK SEKARANG! ⚡</div>
+
+  </div>
+</div>
+
+
+
+
+<style>
+  .marquee{
+    width:100%;
+    overflow:hidden;
+  }
+  .marquee__track{
+    display:flex;
+    gap:48px;
+    align-items:center;
+    animation:marqueeMove 2s linear infinite, colorShift 6s linear infinite;
+  }
+  .marquee__item{
+    white-space:nowrap;
+    font-weight:700;
+    font-size:24px;
+    background: linear-gradient(90deg,
+      #ff0000 0%, #ff7a00 12%, #ffd900 25%, 
+      #00c853 40%, #00b0ff 55%, #6200ea 70%, 
+      #ff00a8 85%, #ff0000 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  @keyframes marqueeMove{
+    0%{ transform: translateX(0); }
+    100%{ transform: translateX(-50%); }
+  }
+  @keyframes colorShift{
+    0%{ background-position: 0% 50%; }
+    100%{ background-position: 200% 50%; }
+  }
+</style>
+
+    <div class="container">
+        <!-- Gambar Beranda -->
+        <img src="ui.jpg" alt="Gambar Beranda" class="home-image">
+        
+
+        <!-- Tombol -->
+        <div class="buttons">
+    <button class="masuk" onclick="window.location.href='Masuk.html'">Masuk</button>
+    <button class="daftar" onclick="window.location.href='Daftar.html'">Daftar</button>
+</div>
+
+</body>
+</html>
